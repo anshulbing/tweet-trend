@@ -10,11 +10,8 @@ environment {
     stages {
         stage('build') {
            steps {
-                echo "build started"
-                sh "echo 'Testing shell execution'"
-                sh "which mvn"
+                echo "build started with tests"
                 sh "mvn -version"
-                sh "mvn clean deploy"
                 echo "build done"
            }
         }
