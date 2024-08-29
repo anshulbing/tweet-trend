@@ -1,4 +1,6 @@
 def registry = 'https://anshulbing.jfrog.io'
+def imageName = 'anshulbing.jfrog.io/valaxy-docker-local/ttrend'
+def version   = '2.1.4'
 
 pipeline {
     agent {
@@ -29,7 +31,7 @@ environment {
                           "files": [
                             {
                               "pattern": "jarstaging/(*)",
-                              "target": "maven-libs-release-local/{1}",
+                              "target": "libs-release-local/{1}",
                               "flat": "false",
                               "props" : "${properties}",
                               "exclusions": [ "*.sha1", "*.md5"]
@@ -43,6 +45,28 @@ environment {
             
             }
         }   
+    }
+
+    stage(" Docker Build ") {
+      steps {
+        script {
+           echo '<--------------- Docker Build Started --------------->'
+           app = docker.build(imageName+":"+version)
+           echo '<--------------- Docker Build Ends --------------->'
+        }
+      }
+    }
+
+            stage (" Docker Publish "){
+        steps {
+            script {
+               echo '<--------------- Docker Publish Started --------------->'  
+                docker.withRegistry(registry, '2ee20abb-e709-4c19-b06e-36bcb6f0945a'){
+                    app.push()
+                }    
+               echo '<--------------- Docker Publish Ended --------------->'  
+            }
+        }
     }
 
         
